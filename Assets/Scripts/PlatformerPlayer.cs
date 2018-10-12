@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlatformerPlayer : MonoBehaviour {
     public float speed = 250.0f;
+    public float jumpForce = 12.0f;
 
     private Rigidbody2D _body;
     private Animator _anim;
@@ -19,6 +20,10 @@ public class PlatformerPlayer : MonoBehaviour {
         float deltaX = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
         Vector2 movement = new Vector2(deltaX, _body.velocity.y);
         _body.velocity = movement;
+
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            _body.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
 
         _anim.SetFloat("speed", Mathf.Abs(deltaX));
         if (!Mathf.Approximately(deltaX, 0)) {
