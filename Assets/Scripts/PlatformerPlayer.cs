@@ -8,11 +8,13 @@ public class PlatformerPlayer : MonoBehaviour {
 
     private Rigidbody2D _body;
     private Animator _anim;
+    private BoxCollider2D _box;
 
 	// Use this for initialization
 	void Start () {
         _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
+        _box = GetComponent<BoxCollider2D>();
 	}
 	
 	// Update is called once per frame
@@ -21,7 +23,19 @@ public class PlatformerPlayer : MonoBehaviour {
         Vector2 movement = new Vector2(deltaX, _body.velocity.y);
         _body.velocity = movement;
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        Vector3 max = _box.bounds.max;
+        Vector3 min = _box.bounds.min;
+        // Check below the collider's min Y values
+        Vector2 corner1 = new Vector2(max.x, min.y - .1f);
+        Vector2 corner2 = new Vector2(min.x, min.y - .2f);
+        Collider2D hit = Physics2D.OverlapArea(corner1, corner2);
+        bool grounded = false;
+        if (hit != null) {
+            // If a collider was detected under the player
+            grounded = true;
+        }
+
+        if (grounded && Input.GetKeyDown(KeyCode.Space)) {
             _body.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
 
